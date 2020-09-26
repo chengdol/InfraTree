@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+IMAGE_NAME = "generic/centos7"
+IMAGE_VERSION = "3.0.10"
+
+## Vagrantfile for centOS 
+Vagrant.configure("2") do |config|
+  config.vm.box = IMAGE_NAME
+  config.vm.hostname = "centos-#SUFFIX#"
+  config.vm.box_version = IMAGE_VERSION
+
+  ## virtualbox configuration
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+    v.cpus = 2
+  end
+
+  ## specify provisioner
+  config.vm.provision :shell, path: "./provisioners/provision-#SUFFIX#.sh", privileged: false
+  ## specify workspace
+  config.vm.synced_folder "./workspace", "/workspace", disabled: false
+
+  ## append other provisioner below
+  ## please use firefox or chrome incognito, chrome may not work
+  config.vm.network "private_network", ip: "192.168.2.2"
+  #config.vm.network "forwarded_port", guest: 9090, host: 9090
+
+  #config.vm.synced_folder "src/", "/srv/website", type: "rsync", rsync__exclude: ".git/"
+end

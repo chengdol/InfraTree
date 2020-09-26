@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+## now support centOS 6.6 to 7.7
+IMAGE_NAME = "generic/centos7"
+IMAGE_VERSION = "3.0.10"
+
+## Vagrantfile for centOS 
+Vagrant.configure("2") do |config|
+  config.vm.box = IMAGE_NAME
+  config.vm.box_version = IMAGE_VERSION
+  config.vm.provision :shell, path: "provision.sh", privileged: false
+
+  ## virtualbox configuration
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 512
+    v.cpus = 1
+  end
+
+  ## peer to peer, every node can be the seed node
+  ## cassandra server
+  config.vm.define "server", primary: true do |v|
+    v.vm.hostname = "server"
+    v.vm.network "private_network", ip: "172.20.20.31"
+  end
+  ## cassandra clients
+  (1..1).each do |i|
+    config.vm.define "client#{i}" do |v|
+      v.vm.hostname = "client#{i}"
+      v.vm.network "private_network", ip: "172.20.20.2#{i}"
+    end
+  end
+end

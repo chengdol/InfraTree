@@ -1,0 +1,6 @@
+---
+- name: Print hostname
+  command: hostname
+    
+  
+  

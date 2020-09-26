@@ -1,0 +1,42 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "wesmcclure/ubuntu1404-docker"
+  config.vm.box_version = "2.0.18"
+  config.vm.provision "shell", path: "provision/install.consul.sh", privileged: false
+
+  ## consul-server node
+  config.vm.define "consul-server" do |cs|
+    cs.vm.hostname = "consul-server"
+    cs.vm.network "private_network", ip: "172.20.20.31"
+  end
+
+  ## loal balancer
+  config.vm.define "lb" do |lb|
+    lb.vm.hostname = "lb"
+    lb.vm.network "private_network", ip: "172.20.20.11"
+    ## install and run haproxy docker
+    lb.vm.provision "shell", path: "provision/setup.lb.sh", privileged: false
+    ## install consul-template
+    lb.vm.provision "shell", path: "provision/install.consul-template.sh", privileged: false
+  end
+
+  ## web
+  (1..2).each do |i|
+    config.vm.define "web#{i}" do |web|
+      web.vm.hostname = "web#{i}"
+      web.vm.network "private_network", ip: "172.20.20.2#{i}"
+      ## install and run nginx docker
+      web.vm.provision "shell", path: "provision/setup.web.sh", privileged: false
+    end
+  end
+
+  ## used to display UI
+  config.vm.define "ui" do |ui|
+    ui.vm.hostname = "ui"
+    ui.vm.network "forwarded_port", guest: 8500, host: 8500, auto_correct: true
+    ui.vm.network "private_network", ip: "172.20.20.41"
+  end
+
+end

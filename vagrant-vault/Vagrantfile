@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+IMAGE_NAME = "generic/centos8"
+IMAGE_VERSION = "3.0.10"
+
+## Vagrantfile for centOS
+Vagrant.configure("2") do |config|
+  config.vm.box = IMAGE_NAME
+  config.vm.hostname = "centos-local"
+  config.vm.box_version = IMAGE_VERSION
+  config.vm.provision :shell, path: "provision/install-vault.sh", privileged: false
+
+  ## virtualbox configuration
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 512
+    v.cpus = 1
+  end
+
+  ## vault-server node
+  config.vm.define "vault-server" do |vs|
+    vs.vm.hostname = "vault-server"
+    vs.vm.network "private_network", ip: "172.20.20.31"
+    vs.vm.network "forwarded_port", guest: 8200, host: 8200
+  end
+
+  ## vault client node
+  ## you can run `vault login` to server from client node
+  config.vm.define "vault-client" do |vc|
+    vc.vm.hostname = "vault-client"
+    vc.vm.network "private_network", ip: "172.20.20.41"
+  end
+end

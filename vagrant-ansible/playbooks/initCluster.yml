@@ -1,0 +1,21 @@
+---
+- name: operate on master group
+  hosts: master
+  become: true
+  any_errors_fatal: true
+  roles:
+    - init.group
+
+- name: operate on workers group
+  hosts: workers
+  become: true
+  any_errors_fatal: true
+  roles:
+    - init.group
+
+- name: operate on nodes group
+  hosts: nodes
+  become: true
+  any_errors_fatal: true
+  roles:
+    - init.group

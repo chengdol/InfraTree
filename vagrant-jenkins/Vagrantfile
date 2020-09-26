@@ -1,0 +1,55 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+## image info for all machines
+IMAGE_NAME = "generic/centos7"
+IMAGE_VERSION = "3.0.10"
+
+## server static ip
+SERVER_IP = "192.168.3.2"
+## agent static ip, start from 192.168.50.1x
+AGENT_IP = "192.168.3.1"
+
+## Vagrantfile for Jenkins
+Vagrant.configure("2") do |config|
+  ## box for virtual machines
+  config.vm.box = IMAGE_NAME
+  config.vm.box_version = IMAGE_VERSION
+
+  ## virtualbox configuration for virtual machines
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 512
+    v.cpus = 1
+  end
+
+  ## Jenkins server, set as primary
+  config.vm.define "server", primary: true do | server|
+    server.vm.hostname = "jenkins-server"
+
+    ## private network
+    server.vm.network "private_network", ip: SERVER_IP
+    ## port forwarding for Jenkins UI
+    ##server.vm.network "forwarded_port", guest: 8080, host: 8080, auto_correct: true
+    server.vm.synced_folder ".", "/vagrant"
+
+    ## provisioning
+    server.vm.provision :shell, path: "scripts/server.sh", privileged: false
+  end
+
+  ## agents setup
+  (1..2).each do |i|
+    config.vm.define "agent#{i}" do |agent|
+      agent.vm.hostname = "jenkins-agent#{i}"
+
+      ## private network
+      agent.vm.network "private_network", ip: "#{AGENT_IP}#{i}"
+      agent.vm.synced_folder ".", "/vagrant"
+
+      ## provisioning
+      agent.vm.provision :shell, path: "scripts/agent.sh", privileged: false
+    end
+  end
+
+  ## use another shared folder via rsync
+  #config.vm.synced_folder "src/", "/srv/website", type: "rsync", rsync__exclude: ".git/"
+end
