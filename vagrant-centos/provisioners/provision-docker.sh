@@ -1,6 +1,5 @@
 #!/bin/bash
 set -eux
-
 sudo yum remove docker \
                   docker-client \
                   docker-client-latest \
@@ -23,7 +22,15 @@ sudo systemctl start docker
 ## alias
 sudo sh -c 'echo alias di=\"docker images\" >> /root/.bashrc'
 sudo sh -c 'echo alias dp=\"docker ps\" >> /root/.bashrc'
-
+sudo sh -c 'echo alias drp=\"docker rm -f\" >> /root/.bashrc'
+sudo sh -c 'echo alias dri=\"docker rmi -f\" >> /root/.bashrc'
+sudo sh -c 'echo alias dl=\"docker logs -f\" >> /root/.bashrc'
+sudo tee -a /root/.bashrc << EOF
+dexec()
+{
+  docker exec -it \${1} sh
+}
+EOF
 
 ## stop firewalld
 sudo systemctl stop firewalld
