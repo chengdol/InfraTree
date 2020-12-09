@@ -21,8 +21,8 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 ## alias
-echo "alias di='docker images'" >> /root/.bashrc
-echo "alias dp='docker ps'" >> /root/.bashrc
+sudo sh -c 'echo alias di=\"docker images\" >> /root/.bashrc'
+sudo sh -c 'echo alias dp=\"docker ps\" >> /root/.bashrc'
 
 
 ## stop firewalld
