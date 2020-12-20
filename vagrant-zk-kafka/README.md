@@ -15,6 +15,12 @@ ZK_URL = "https://archive.apache.org/dist/zookeeper/zookeeper-3.6.2/apache-zooke
 KAFKA_URL= "https://mirrors.sonic.net/apache/kafka/2.6.0/kafka_2.12-2.6.0.tgz"
 ```
 
+Steps:
+```bash
+vagrant up
+# then
+./shell-playbook.sh
+```
 The provisioning shell will automatically config and start the zookeeper and kafka. To speed up processing, SSH commands run parallelly.
 An alternative is to use Ansible.
 
