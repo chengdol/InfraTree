@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+## node static ip
+IP1 = "192.168.20.20"
+IP2 = "192.168.20.21"
+IP3 = "192.168.20.22"
+
+IMAGE_NAME = "generic/centos7"
+IMAGE_VERSION = "3.0.10"
+
+Vagrant.configure("2") do |config|
+  config.vm.box = IMAGE_NAME 
+  config.vm.box_version = IMAGE_VERSION
+  
+  # capacity
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 2
+  end
+  # sync folder
+  config.vm.synced_folder "provision/", "/provision",
+    owner: "root", group: "root"
+
+  config.vm.define "zkkafka1", primary: true do | zkkafka1|
+    zkkafka1.vm.hostname = "zkkafka1"
+    zkkafka1.vm.network "private_network", ip: IP1
+  end
+  
+  config.vm.define "zkkafka2" do | zkkafka2|
+    zkkafka2.vm.hostname = "zkkafka2"
+    zkkafka2.vm.network "private_network", ip: IP2
+  end 
+
+  config.vm.define "zkkafka3" do | zkkafka3|
+    zkkafka3.vm.hostname = "zkkafka3"
+    zkkafka3.vm.network "private_network", ip: IP3
+  end
+end
