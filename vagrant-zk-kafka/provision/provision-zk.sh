@@ -9,7 +9,7 @@ ZK_TGZ=${ZK_URL##*\/}
 ZK_DIR=${ZK_TGZ%@(.tgz|.tar.gz)}
 
 # zk and kafka id are extracted from hostname digit suffix
-ZK_ID=${HOSTNAME##*[:alpha:]}
+ZK_ID=${HOSTNAME##*[[:alpha:]]}
 
 ## stop firewalld
 systemctl stop firewalld
