@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+IMAGE_NAME = "generic/centos7"
+IMAGE_VERSION = "3.0.10"
+
+Vagrant.configure("2") do |config|
+  config.vm.box = IMAGE_NAME 
+  config.vm.box_version = IMAGE_VERSION
+  # capacity
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 512
+      v.cpus = 1
+  end
+  config.vm.hostname = "storage"
+  # resize primary disk to 40GB
+  config.vm.disk :disk, size: "40GB", primary: true
+  # attach 2 disks 2GB each
+  (0..1).each do |i|
+    config.vm.disk :disk, size: "2GB", name: "disk-#{i}"
+  end
+end
