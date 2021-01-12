@@ -1,5 +1,5 @@
 # Linux Storage
-This Vagrantfile will launch a instance with a primary disk 40GB and 2 additional disks 2GB each.
+This Vagrantfile will launch an instance with a primary disk 40GB and 2 additional disks 2GB each.
 
 You can play with operations such as: partition disk, format, mount and NFS.
 Also creation of logical volume, loop device, raid partitioning, etc.
@@ -13,7 +13,7 @@ VAGRANT_EXPERIMENTAL="disks" vagrant up
 vagrant destroy -f
 ```
 
-The diagram can refresh your brain. Thinking about how to get it and what does it mean.
+The diagram can help refreshing your brain. Thinking about how to get it and what does it mean.
 ```bash
 # lsblk
 NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
