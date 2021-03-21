@@ -1,13 +1,21 @@
 ## Simple Elasticsearch Cluster
 
 This is a simple production elasticsearch 2-node cluster for demonstration purpose.
+It will set Kibana and Logstash componetns.
+
+To access Kibana dashboard, try:
+```
+http://172.20.21.30:5601
+```
 
 Bring up master and data node(suffix index starts from 1)
 ```bash
 vagrant up
+
 # or separately
 vagrant up master
 vagrant up data1
+
 # check status
 vagrant status
 ```

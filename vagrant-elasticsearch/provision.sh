@@ -6,6 +6,11 @@ ES_VERSION="7.11.1"
 ES_CLUSTER_NAME="chengdol-es"
 ES_HOME="/opt/elasticsearch-${ES_VERSION}"
 
+KIBANA_VERSION="7.11.2-linux-x86_64"
+KIBANA_SERVER_NAME="chengdol-kibana"
+KIBANA_HOME="/opt/kibana-${KIBANA_VERSION}"
+
+
 # stop firewalld
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
@@ -37,7 +42,6 @@ sudo curl -s -L -O https://artifacts.elastic.co/downloads/elasticsearch/elastics
 sudo /bin/cp -rf ./elasticsearch-${ES_VERSION}-linux-x86_64.tar.gz ${ES_HOME}-linux-x86_64.tar.gz
 sudo tar -C /opt -xf ${ES_HOME}-linux-x86_64.tar.gz
 sudo chown -R elastic:elastic ${ES_HOME}
-
 
 
 # elasticsearch configuration
@@ -76,10 +80,38 @@ node.roles: [ data ]
 _EOF_
 fi
 
-# run as daemon
+# run ES as daemon
 # Log messages can be found in the $ES_HOME/logs/ directory
-sudo su - elastic -c "export ES_HOME=${ES_HOME}; /opt/elasticsearch-${ES_VERSION}/bin/elasticsearch -d -p pid"
+sudo su - elastic -c "export ES_HOME=${ES_HOME}; ${ES_HOME}/bin/elasticsearch -d -p pid"
 # pkill -F pid (pid is the file contains PID)
+sleep 5
 
-#sleep 30
-#sudo curl -X GET "172.20.21.30:9200/_cat/health?v=true&format=json&pretty"
+
+# install and run kibana on master
+# access kibana dashboard from http://172.20.21.30:5601
+if [[ "$HOSTNAME" == "master" ]]; then
+  cd /opt
+  sudo curl -s -O https://artifacts.elastic.co/downloads/kibana/kibana-${KIBANA_VERSION}.tar.gz
+  sudo tar -xzf kibana-${KIBANA_VERSION}.tar.gz 
+
+  sudo groupadd kibana
+  sudo useradd kibana -g kibana
+
+  sudo mkdir -p ${KIBANA_HOME}/log
+  sudo chown -R kibana:kibana ${KIBANA_HOME}
+
+  cat << _EOF_ | sudo tee -a ${KIBANA_HOME}/config/kibana.yml
+server.port: 5601
+server.host: "172.20.21.30"
+
+server.name: "${KIBANA_SERVER_NAME}"
+elasticsearch.hosts: ["http://172.20.21.30:9200", "http://172.20.21.31:9200"]
+
+pid.file: ${KIBANA_HOME}/kibana.pid
+kibana.index: ".kibana"
+_EOF_
+ 
+  sudo su - kibana -c "export KIBANA_HOME=${KIBANA_HOME}; ${KIBANA_HOME}/bin/kibana &>${KIBANA_HOME}/log/$(date +'%Y-%m-%d-%H-%M-%S').log  &"
+  sleep 5
+fi
+
