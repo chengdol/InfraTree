@@ -84,7 +84,7 @@ fi
 # Log messages can be found in the $ES_HOME/logs/ directory
 sudo su - elastic -c "export ES_HOME=${ES_HOME}; ${ES_HOME}/bin/elasticsearch -d -p pid"
 # pkill -F pid (pid is the file contains PID)
-sleep 5
+sleep 2
 
 
 # install and run kibana on master
@@ -112,6 +112,6 @@ kibana.index: ".kibana"
 _EOF_
  
   sudo su - kibana -c "export KIBANA_HOME=${KIBANA_HOME}; ${KIBANA_HOME}/bin/kibana &>${KIBANA_HOME}/log/$(date +'%Y-%m-%d-%H-%M-%S').log  &"
-  sleep 5
+  sleep 2
 fi
 

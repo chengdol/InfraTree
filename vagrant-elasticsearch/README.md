@@ -1,49 +1,52 @@
 ## Simple Elasticsearch Cluster
 
-This is a simple production elasticsearch 2-node cluster for demonstration purpose.
-It will set Kibana and Logstash componetns.
+This is a simple production elasticsearch 3-node cluster for demonstration purpose.
 
-To access Kibana dashboard, try:
-```
-http://172.20.21.30:5601
-```
+It contains components such as Elasticsearch, Filebeat, Logstash and Kibana, all installed by downloading binary:
+- master node: ES master, Kibana
+- data1 node:  ES data
+- client node: Filebeat, Logstash
 
-Bring up master and data node(suffix index starts from 1)
+On client node, Filebeat collects sample data from a Apache log file and passes it to Logstash process which runs in the same node. Then Logstash performs some filtering jobs, handles result to ES cluster.
+
+Bring up 3 nodes, data node suffix index starts from 1)
 ```bash
 vagrant up
 
 # or separately
-vagrant up master
 vagrant up data1
+vagrant up master
+vagrant up client
 
 # check status
 vagrant status
 ```
-SSH to master/data:
+SSH to each node:
 ```bash
 vagrant ssh [master]
 vagrant ssh data1
+vagrant ssh client
 ```
 Destroy VMs:
 ```bash
 vagrant destroy -f
 ```
 
-To add more data nodes, increase loop range in data nodes block: 
-```ruby
-  # data nodes
-  # for example (1..2)
-  (1..1).each do |i|
-    config.vm.define "data#{i}" do |v|
-      v.vm.hostname = "date#{i}"
-      v.vm.network "private_network", ip: "172.20.21.3#{i}"
-    end
-  end
+To access Kibana dashboard, type:
 ```
-And append data nodes IP:9300 in provision.sh file: 
-```yaml
-discovery.seed_hosts:
-  - 172.20.21.30:9300
-  - 172.20.21.31:9300
-  - append here
+http://172.20.21.30:5601
+```
+To query and analyze the sample data in Kibana, first set up Index Patterns.
+
+Several requests in Kibana dev console:
+```bash
+# check node status
+GET /_cat/nodes?v&pretty&format=json
+# check index
+GET /_cat/indices?v
+
+# query sample data
+# <DATE> is replaced by real value
+GET /apache-stale-log-<DATE>/_search?pretty&q=response=200
+GET /apache-stale-log-<DATE>/_search?pretty&q=geoip.city_name=Buffalo
 ```
