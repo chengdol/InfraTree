@@ -14,8 +14,8 @@ KIBANA_HOME="/opt/kibana-${KIBANA_VERSION}"
 # stop firewalld
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
-# install required packages
-sudo yum install -y -q java-1.8.0-openjdk-devel
+# use self-contained jdk
+#sudo yum install -y -q java-1.8.0-openjdk-devel
 
 
 # system settings for elasticsearch
