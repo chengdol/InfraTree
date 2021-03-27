@@ -1,0 +1,36 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+## server static ip
+GITLAB_IP = "192.168.50.10"
+## worker static ip
+GITLAB_RUNNER_IP = "192.168.50.11"
+
+Vagrant.configure("2") do |config|
+  # gitlab server VM
+  config.vm.define "server", primary: true do | server|
+    server.vm.hostname = "gitlab"
+    server.vm.box = "bento/ubuntu-16.04"
+    ## private network
+    server.vm.network "private_network", ip: GITLAB_IP
+
+    server.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 2
+    end
+  end
+  
+  # gitlab runner VM with docker installed
+  config.vm.define "runner", primary: true do | runner|
+    runner.vm.hostname = "runner"
+    runner.vm.box = "bento/ubuntu-16.04"
+    ## private network
+    runner.vm.network "private_network", ip: GITLAB_RUNNER_IP
+
+    runner.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 2
+    end
+  end 
+
+end
