@@ -1,0 +1,3 @@
+Vagrantfile
+vagrant_ansible_inventory.ini
+ansible.log
