@@ -44,14 +44,28 @@ vagrant up
 
 5. Run ad-hoc ansible command for availability check
 ```bash
-ansible -i vagrant_ansible_inventory.ini all -m shell -a 'echo $(whoami)'
+ansible -v -i vagrant_ansible_inventory.ini all -m shell -a 'echo $(whoami)'
 ```
 The output is something like:
-```
+```yaml
 PLAY [Ansible Ad-Hoc] ********************************************************************************************************************************
 
 TASK [shell] *****************************************************************************************************************************************
-changed: [worker1]
+changed: [worker1] => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": true,
+    "cmd": "echo $(whoami)",
+    "delta": "0:00:00.004071",
+    "end": "2021-03-28 01:55:41.056911",
+    "rc": 0,
+    "start": "2021-03-28 01:55:41.052840"
+}
+
+STDOUT:
+
+root
 
 PLAY RECAP *******************************************************************************************************************************************
 worker1                    : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
