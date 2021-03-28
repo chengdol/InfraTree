@@ -1,0 +1,8 @@
+[all:vars]
+ansible_connection=ssh
+ansible_user=vagrant
+ansible_host=127.0.0.1
+# fetch from vagrant ssh config
+ansible_ssh_common_args='-o LogLevel=FATAL -o Compression=yes -o DSAAuthentication=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+# escalate vagrant -> root
+ansible_become=true

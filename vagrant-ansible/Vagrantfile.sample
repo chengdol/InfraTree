@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# now support centOS 6.6 to 7.7
+IMAGE_NAME = "generic/centos7"
+IMAGE_VERSION = "3.0.10"
+
+# Vagrantfile for centOS
+Vagrant.configure("2") do |config|
+  config.vm.box = IMAGE_NAME
+  config.vm.box_version = IMAGE_VERSION
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 1024
+    vb.cpus = 1
+  end
+
+  (1..{{ num_of_machine }}).each do |i|
+    config.vm.define "worker#{i}" do |worker_config|
+      worker_config.vm.hostname = "worker#{i}"
+      # map ssh port
+      worker_config.vm.network :forwarded_port, host: "1300#{i}", guest: 22, id: "ssh"
+      
+      #worker_config.vm.provision :shell, path: "provision.sh", privileged: false
+      #worker_config.vm.network "private_network", ip: "172.30.21.3#{i}"
+    end
+  end
+end
