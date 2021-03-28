@@ -71,6 +71,11 @@ PLAY RECAP *********************************************************************
 worker1                    : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 Happy to play, test with ad-hoc command or playbook!
+```bash
+ansible-playbook -i vagrant_ansible_inventory.ini setup.yml \
+  -e '{"version":"1.23.45",
+      "other_variable":"foo"}'
+```
 
 As `ansible.cfg` specified, `ansible.log` is generated in the same folder.
 
