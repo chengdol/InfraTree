@@ -11,7 +11,7 @@ virtualenv -p python3.8 ansible
 . ./ansible/bin/activate
 ```
 
-2. Install ansible in virtualenv we created
+2. Install ansible in virtualenv we just created
 ```bash
 # upgrade pip if needed
 pip install --upgrade pip
@@ -26,7 +26,8 @@ pip install paramiko
 ```
 
 3. Make Vagrantfile and corresponding ansible inventory file
-The `make.sh` is designed idempotent, the output files it generated will override previous ones. 
+
+The `make.sh` is designed as idempotent, the output files it generated will override previous ones. 
 ```bash
 # default only create 1 VM
 # please see make usage
@@ -41,7 +42,7 @@ The `make.sh` is designed idempotent, the output files it generated will overrid
 vagrant up
 ```
 
-5. Run ad-hoc ansible for availability check
+5. Run ad-hoc ansible command for availability check
 ```bash
 ansible -i vagrant_ansible_inventory.ini all -m shell -a 'echo $(whoami)'
 ```
@@ -56,6 +57,7 @@ PLAY RECAP *********************************************************************
 worker1                    : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 Happy to play, test with ad-hoc command or playbook!
+
 As `ansible.cfg` specified, `ansible.log` is generated in the same folder.
 
 6. Destroy cluster when you are done
