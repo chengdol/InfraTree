@@ -16,6 +16,7 @@ sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 # use self-contained jdk
 #sudo yum install -y -q java-1.8.0-openjdk-devel
+sudo yum install -y -q jq
 
 
 # system settings for elasticsearch
@@ -55,7 +56,7 @@ cat << _EOF_  | sudo tee -a ${ES_HOME}/config/elasticsearch.yml
 cluster.name: ${ES_CLUSTER_NAME}
 node.name: ${HOSTNAME}
 
-network.host: _eth1_
+network.host: _eth1_,_local_
 http.port: 9200
 
 path:
