@@ -1,0 +1,14 @@
+# alerting rule config
+groups:
+- name: docker-alert
+  rules:
+  - alert: HighRuningContainerNumber
+    expr: engine_daemon_container_states_containers{state="running"} > 5
+    for: 1m
+    labels:
+      type: docker
+      severity: critical
+    annotations:
+      runbook: "TODO"
+      summary: High number of docker running container from {{ $labels.instance }}, the
+        docker container running number is {{ $value }}

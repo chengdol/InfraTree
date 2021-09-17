@@ -1,0 +1,42 @@
+# prom demo cluster
+---
+version: '3.7'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert.rules.yml:/etc/prometheus/alert.rules.yml
+    networks:
+      - prom_net
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    networks:
+      - prom_net
+  grafana:
+    image: grafana/grafana:latest-ubuntu
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - prom_net
+  network-multitool:
+    image: praqma/network-multitool
+    container_name: network-multitool
+    command: tail -f /dev/null 
+    networks:
+      - prom_net
+
+#volumes:
+#  prom_data:
+#    driver: local
+
+networks:
+  prom_net:
+    driver: bridge
