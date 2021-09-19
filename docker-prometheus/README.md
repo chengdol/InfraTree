@@ -58,14 +58,19 @@ promtool check rules /path/to/example.rules.yml
 ```
 
 # Alertmanager
-Alertmanger config:
-https://prometheus.io/docs/alerting/latest/alertmanager/
+Config prometheus to talk to alertmanager:
+https://prometheus.io/docs/prometheus/latest/configuration/configuration/#alertmanager_config
+
+Config alertmanager for routing, notification receivers, inhibition rules, etc:
+https://prometheus.io/docs/alerting/latest/configuration/
+
 ```yaml
 # Alertmanager configuration
 alerting:
   alertmanagers:
   # etc
 ```
+Here in demo I use simple static config and no alertmanager config specified.
 
 # Insight
 Prometheus itself exports metrics: http://localhost:9090/metrics
