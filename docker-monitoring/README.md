@@ -6,10 +6,10 @@ https://docs.docker.com/config/daemon/prometheus/
 
 ```bash
 # start
-docker-compose -f prometheus-compose.yaml up -d
+docker-compose -f monitoring-compose.yaml up -d
 
 # destroy
-docker-compose -f prometheus-compose.yaml down -v
+docker-compose -f monitoring-compose.yaml down -v
 ```
 After up and running, see metrics status in prometheus dashboard `status` -> `targets` section. (The `status` menu is useful)
 
