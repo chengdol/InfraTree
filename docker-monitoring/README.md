@@ -43,6 +43,8 @@ do
 done
 ```
 
+To create variables or dropdown list, go to `Dashboard Settings` -> `Variabkes`. Then in the quert expression variables can be used.
+
 To import pre-configured community dashboard or for reference:
 https://prometheus.io/docs/visualization/grafana/#importing-pre-built-dashboards-from-grafana-com
 
