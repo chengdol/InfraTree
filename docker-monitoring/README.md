@@ -19,8 +19,11 @@ Web UI endpoints:
 - grafana: http://localhost:3000
 
 The initial user/password for grafana is `admin`.
+
 To add prometheus to grafana data source:
 https://prometheus.io/docs/visualization/grafana/#installing
+- Using `http://prometheus:9090` when access mode `Server`
+- Using `http://localhost:9090` when access mode `Browser`
 
 # Add Dashboard for Docker Metrics
 After adding the data source from prometheus, we can fetch docker metrics to form dashboard.
