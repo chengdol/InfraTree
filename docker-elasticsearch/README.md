@@ -1,5 +1,7 @@
 ## Elasticsearch Cluster
 
+The compose file is referenced from [geektime-ELK](https://github.com/geektime-geekbang/geektime-ELK), the many practices please see it as well.
+
 Set up 3 nodes elasticsearch cluster along with kibana and cerebro(commented out in docker compose yaml file)
 ```bash
 # up
