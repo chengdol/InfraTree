@@ -11,7 +11,7 @@ services:
 #    networks:
 #      - es7net
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.2
+    image: docker.elastic.co/kibana/kibana:7.16.2
     container_name: kibana
     environment:
       - XPACK_GRAPH_ENABLED=true
@@ -22,7 +22,7 @@ services:
     networks:
       - es7net
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
     container_name: es7_01
     environment:
       - cluster.name=geektime
@@ -42,7 +42,7 @@ services:
     networks:
       - es7net
   elasticsearch2:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
     container_name: es7_02
     environment:
       - cluster.name=geektime
@@ -60,7 +60,7 @@ services:
     networks:
       - es7net
   elasticsearch3:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
     container_name: es7_03
     environment:
       - cluster.name=geektime

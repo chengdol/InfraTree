@@ -1,6 +1,57 @@
 ---
 - name: Print hostname
   command: hostname
+
+- name: copy jvm options file
+  template:
+    src: "jvm.options.j2"
+    dest: "/tmp/jvm.options"
+    owner: root
+    group: "root"
+    mode: "660"
+    force: yes
+
+- name: pause
+  pause:
+
+- name: update elasticsearch jvm deprecated options
+  replace:
+    path: /tmp/jvm.options
+    regexp: "{{ update_item.old }}"
+    replace: "{{ update_item.new }}"
+  loop:
+    - { old: ^-XX:\+UseConcMarkSweepGC, new: 8-13:-XX:+UseConcMarkSweepGC }
+    - { old: ^-XX:CMSInitiatingOccupancyFraction=75, new: 8-13:-XX:CMSInitiatingOccupancyFraction=75 }
+    - { old: ^-XX:\+UseCMSInitiatingOccupancyOnly, new: 8-13:-XX:+UseCMSInitiatingOccupancyOnly }
+  loop_control:
+    loop_var: update_item
+
+- name: pause
+  pause:
+
+- name: update G1GC config for jdk 14+ in jvm options file
+  lineinfile:
+    path: /tmp/jvm.options
+    insertafter: "^# To use G1GC uncomment"
+    line: "{{ add_item }}"
+  loop:
+    - 14-:-XX:+UseG1GC
+    - 14-:-XX:G1ReservePercent=25
+    - 14-:-XX:InitiatingHeapOccupancyPercent=30
+  loop_control:
+    loop_var: add_item
     
-  
-  
+- name: pause
+  pause:
+
+- name: update G1GC config for jdk 14+ in jvm options file
+  lineinfile:
+    path: /tmp/jvm.options
+    insertafter: "^# To use G1GC uncomment"
+    line: "{{ add_item }}"
+  loop:
+    - 14-:-XX:+UseG1GC
+    - 14-:-XX:G1ReservePercent=25
+    - 14-:-XX:InitiatingHeapOccupancyPercent=30
+  loop_control:
+    loop_var: add_item  

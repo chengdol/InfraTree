@@ -9,6 +9,8 @@ docker-compose -f ./elk-compose.yaml up -d
 docker-compose -f ./elk-compose.yaml down -v
 ```
 
+Access Kibana console from `localhost:5601`, see docker ps for port mapping detail.
+
 To fill in mock indices, try `mock_index_generate.py` script within virtualenv >= python version 3.8, by default each index has 1 primary and 1 replica shard.
 ```bash
 pip install --no-cache-dir -r requirements.txt
