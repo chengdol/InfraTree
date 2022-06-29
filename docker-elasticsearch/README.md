@@ -1,6 +1,6 @@
 ## Elasticsearch Cluster
 
-The compose file is referenced from [geektime-ELK](https://github.com/geektime-geekbang/geektime-ELK), I have tailored the compose file to create hot/warm/cold tiers ES.
+The compose file is referenced from [geektime-ELK](https://github.com/geektime-geekbang/geektime-ELK), I have tailored the compose file to create hot/warm/cold tiers ES by specifying the `node.roles` ENV variable, see compose file for detail.
 
 Set up 3 nodes elasticsearch cluster along with kibana (comment out cerebro if needed):
 ```bash
@@ -10,7 +10,11 @@ docker-compose -f ./elk-compose.yaml up -d
 # down
 docker-compose -f ./elk-compose.yaml down -v
 ```
-Access Kibana console from browser `http://localhost:5601/`, check `docker ps` for port mapping detail.
+Access Kibana console from browser `http://localhost:5601/`, check `docker ps` for port mapping detail. Verify the node roles are good:
+```bash
+GET _cat/nodes
+GET _cluster/health
+```
 
 # Hot/Warm/Cold Tiers
 To try hot/warm/cold tiers, data stream and see how ILM works:
