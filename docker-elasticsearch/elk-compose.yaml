@@ -13,7 +13,9 @@ services:
     image: docker.elastic.co/kibana/kibana:7.16.2
     container_name: kibana
     environment:
-      - elasticsearch.hosts:"http://es7_hot:9200"
+      # use container_name "es7_hot" as url
+      # use upper case ENV var name: https://www.elastic.co/guide/en/kibana/current/docker.html#environment-variable-config
+      - ELASTICSEARCH_HOSTS=http://es7_hot:9200
     ports:
       - "5601:5601"
     networks:
