@@ -17,7 +17,9 @@ GET _cluster/health
 ```
 
 # Hot/Warm/Cold Tiers
-To try hot/warm/cold tiers, data stream and see how ILM works:
+
+## Data Stream Plus ILM
+Check data stream and see how ILM works:
 ```bash
 # update cluster setting
 PUT _cluster/settings
@@ -110,6 +112,104 @@ GET .ds-hd-hello-*/_search?pretty
 # delete data stream
 DELETE /_data_stream/hd-hello
 DELETE /_data_stream/hd-apple
+```
+
+## Alias Plus ILM
+Check rollover alias and how ILM works:
+```bash
+# update cluster setting
+PUT _cluster/settings
+{
+  "persistent": {
+    "indices.lifecycle.poll_interval":"1s"
+  }
+}
+
+# create Policy
+# here I only enable hot and deletion phases
+PUT _ilm/policy/ilm_hot_warm_cold_deletion
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "actions": {
+          "rollover": {
+            "max_docs": 3
+          },
+          "set_priority": {
+            "priority": 100
+          }
+        },
+        "min_age": "0ms"
+      },
+      "warm": {
+        "min_age": "0d",
+        "actions": {
+          "set_priority": {
+            "priority": 50
+          }
+        }
+      },
+      "cold": {
+        "min_age": "60s",
+        "actions": {
+          "set_priority": {
+            "priority": 0
+          }
+        }
+      },
+      "delete": {
+        "min_age": "240s",
+        "actions": {
+          "delete": {}
+        }
+      }
+    }
+  }
+}
+
+# create template
+# set number_of_replicas to 0 as I only have 1 node per tier
+PUT /_index_template/ilm_hot_warm_cold_deletion_template
+{
+  "index_patterns" : ["hwcd-*"],
+  "priority": 1000,
+  "template": {
+    "settings" : {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "index.lifecycle.name": "ilm_hot_warm_cold_deletion",
+      "index.lifecycle.rollover_alias": "hwcd-alias"
+    },
+    "mappings" : { },
+    "aliases" : { }
+  }
+}
+
+# bootstrap init write index, must match the index pattern
+# hwcd-* and with number suffix 000001(the init rollover count)
+PUT hwcd-apple-000001
+{
+  "aliases": {
+    "hwcd-alias": {
+      "is_write_index": true
+    }
+  }
+}
+
+# use the alias to index doc and ILM can help
+# rollover
+POST hwcd-alias/_doc/
+{
+  "@timestamp": "2099-04-08T11:06:07.000Z",
+  "user": {
+    "id": "8a4f500d"
+  },
+  "message": "Login successful"
+}
+
+GET _alias/hwcd-alias
+GET hwcd-*/_ilm/explain
 ```
 
 # Mock Indices
