@@ -1,6 +1,7 @@
-# Vagrant Ansible Testing Cluster Setup
+# Vagrant Ansible Setup
 
-This repo is for bringing up a single or multiple nodes cluster for ansible testing purpose.
+This repo is used for spinning up a single or multi-node ansible testing
+environment via Vagrant.
 
 
 1. Set up python3.8+ virtualenv locally on you control node
@@ -29,11 +30,10 @@ pip install paramiko
 
 The `make.sh` is designed as idempotent, the output files it generated will override previous ones. 
 ```bash
-# default only create 1 VM
-# please see make usage
+# Default only create 1 VM, please see make usage.
 ./make.sh
 
-# for example, make 3 VMs
+# For example, make 3 VMs for Ansible management.
 ./make.sh 3
 ```
 
@@ -72,11 +72,11 @@ worker1                    : ok=1    changed=1    unreachable=0    failed=0    s
 ```
 Happy to play, test with ad-hoc command or playbook!
 ```bash
+# To test Ansible role, using the setup.yml as entry to call it.
 ansible-playbook -i vagrant_ansible_inventory.ini setup.yml \
-  -e '{"version":"1.23.45",
-      "other_variable":"foo"}'
+-e "version=1.23.45" \
+-e "other_variable=foo"
 ```
-
 As `ansible.cfg` specified, `ansible.log` is generated in the same folder.
 
 6. Destroy cluster when you are done

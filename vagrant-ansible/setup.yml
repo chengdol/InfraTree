@@ -1,20 +1,47 @@
-- name: init
-  hosts: all
-  become: true
+---
+- hosts: all
+  gather_facts: no
   any_errors_fatal: true
+  become: true
+  vars:
+    var1: "var1"
   roles:
-    - init.group
-
-- name: config
-  hosts: all
-  become: true
-  any_errors_fatal: true
+    # The same as import_role module.
+    - <role1 name>
+    - <role2 name>
 
   tasks:
-  - name: get whoami
-    shell: whoami
-    register: result
+    - debug:
+        # Example usage of some functions.
+        msg: >
+          "{{ ((groups['data'] | length) == 0) 
+          | ternary([ 1,2,3, ],[ 1,2, ]) }}"
 
-  - name: displya whoami
-    debug:
-      var: result
+    - name: Rendering template to /etc folder
+      template:
+        src: test.yml.j2
+        dest: /etc/test.yml
+
+    - debug:
+        # Exclusively with 'msg' clause.
+        var: foo
+
+    - name: Run sysctl update
+      sysctl:
+        name: net.core.rmem_max
+        value: "{{ foo | int }}"
+        state: present
+        reload: yes
+
+    # Dynamiaclly load and run role in playbook where it is defined.
+    - name: Include role
+      include_role:
+        name: <role name>
+
+    # Statically load role, the same as 'roles' clause that will parse the
+    # imported role before playbook runs, it will fail the playbook if there is
+    # any syntax error.
+    - name: Import role
+      import_role:
+        name: <role name>
+
