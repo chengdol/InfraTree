@@ -1,21 +1,25 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# now support centOS 6.6 to 7.7
-IMAGE_NAME = "generic/centos7"
-IMAGE_VERSION = "3.0.10"
+# Box link: https://portal.cloud.hashicorp.com/vagrant/discover/bento/rockylinux-9
+IMAGE_NAME = "bento/rockylinux-9"
+IMAGE_VERSION = "202502.21.0"
 
-# Vagrantfile for centOS
 Vagrant.configure("2") do |config|
   config.vm.box = IMAGE_NAME
   config.vm.box_version = IMAGE_VERSION
 
-  # data nodes
+  # I disabled the synced folder as the rocky linux image does not have
+  # VirtualBox Guest Additions installed, this shared folder feature is not
+  # necessary to run VM.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # ES data nodes
   (1..1).each do |i|
     config.vm.define "data#{i}" do |data_config|
       data_config.vm.provider "virtualbox" do |vb|
-        vb.memory = 1536
-        vb.cpus = 1
+        vb.memory = 2048
+        vb.cpus = 2
       end
 
       data_config.vm.hostname = "data#{i}"
@@ -24,12 +28,12 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  # master node
+  # ES master node
   config.vm.define "master", primary: true do |master_config|
     # at least 4GB, otherwise kibana launch will get stuck
     master_config.vm.provider "virtualbox" do |vb|
-      vb.memory = 3072
-      vb.cpus = 2
+      vb.memory = 4096
+      vb.cpus = 4
     end
 
     master_config.vm.hostname = "master"

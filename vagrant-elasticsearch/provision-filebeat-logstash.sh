@@ -2,8 +2,10 @@
 set -euf pipefail
 set -x
 
-FILEBEAT_VERSION="filebeat-7.11.2-linux-x86_64"
-LOGSTASH_VERSION="logstash-7.11.2"
+# Please stay with the same version as Elasticserach
+# Please note that filebeat and logstash have different arm64 suffix
+FILEBEAT_VERSION="filebeat-8.18.2-linux-arm64"
+LOGSTASH_VERSION="logstash-8.18.2"
 
 cd /opt
 # download sample data file with apache log
@@ -35,8 +37,8 @@ sudo su - filebeat -c "cd /opt/${FILEBEAT_VERSION}; ./filebeat -c filebeat.yml -
 
 
 # logstash
-sudo curl -s -L -O https://artifacts.elastic.co/downloads/logstash/${LOGSTASH_VERSION}-linux-x86_64.tar.gz
-sudo tar -zxf ${LOGSTASH_VERSION}-linux-x86_64.tar.gz 
+sudo curl -s -L -O https://artifacts.elastic.co/downloads/logstash/${LOGSTASH_VERSION}-linux-aarch64.tar.gz
+sudo tar -zxf ${LOGSTASH_VERSION}-linux-aarch64.tar.gz 
 sudo groupadd logstash
 sudo useradd logstash -g logstash
 

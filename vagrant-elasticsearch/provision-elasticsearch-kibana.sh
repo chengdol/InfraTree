@@ -2,11 +2,16 @@
 set -euo pipefail
 set -x
 
-ES_VERSION="7.11.1"
+# For ES version, please check:
+# https://www.elastic.co/guide/en/elasticsearch/reference/8.18/targz.html
+# please download arm64 compatible version as it is running in Mac M2, e.g:
+# elasticsearch-8.18.2-linux-aarch64.tar.gz
+
+ES_VERSION="8.18.2"
 ES_CLUSTER_NAME="chengdol-es"
 ES_HOME="/opt/elasticsearch-${ES_VERSION}"
 
-KIBANA_VERSION="7.11.2-linux-x86_64"
+KIBANA_VERSION="8.18.2"
 KIBANA_SERVER_NAME="chengdol-kibana"
 KIBANA_HOME="/opt/kibana-${KIBANA_VERSION}"
 
@@ -15,7 +20,6 @@ KIBANA_HOME="/opt/kibana-${KIBANA_VERSION}"
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 # use self-contained jdk
-#sudo yum install -y -q java-1.8.0-openjdk-devel
 sudo yum install -y -q jq
 
 
@@ -39,9 +43,9 @@ sudo groupadd elastic
 sudo useradd elastic -g elastic
 
 # install elasticsearch
-sudo curl -s -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}-linux-x86_64.tar.gz
-sudo /bin/cp -rf ./elasticsearch-${ES_VERSION}-linux-x86_64.tar.gz ${ES_HOME}-linux-x86_64.tar.gz
-sudo tar -C /opt -xf ${ES_HOME}-linux-x86_64.tar.gz
+sudo curl -s -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}-linux-aarch64.tar.gz
+sudo /bin/cp -rf ./elasticsearch-${ES_VERSION}-linux-aarch64.tar.gz ${ES_HOME}-linux-aarch64.tar.gz
+sudo tar -C /opt -xf ${ES_HOME}-linux-aarch64.tar.gz
 sudo chown -R elastic:elastic ${ES_HOME}
 
 
@@ -52,9 +56,13 @@ sudo chown -R elastic:elastic /var/data/elasticsearch
 sudo chown -R elastic:elastic /var/log/elasticsearch
 
 # config custom parameters
+# xpack.security.enabled: false is needed otherwise you have to set up transport
+# SSL
 cat << _EOF_  | sudo tee -a ${ES_HOME}/config/elasticsearch.yml
 cluster.name: ${ES_CLUSTER_NAME}
 node.name: ${HOSTNAME}
+
+xpack.security.enabled: false
 
 network.host: _eth1_,_local_
 http.port: 9200
@@ -92,8 +100,8 @@ sleep 2
 # access kibana dashboard from http://172.20.21.30:5601
 if [[ "$HOSTNAME" == "master" ]]; then
   cd /opt
-  sudo curl -s -O https://artifacts.elastic.co/downloads/kibana/kibana-${KIBANA_VERSION}.tar.gz
-  sudo tar -xzf kibana-${KIBANA_VERSION}.tar.gz 
+  sudo curl -s -O https://artifacts.elastic.co/downloads/kibana/kibana-${KIBANA_VERSION}-linux-aarch64.tar.gz
+  sudo tar -xzf kibana-${KIBANA_VERSION}-linux-aarch64.tar.gz
 
   sudo groupadd kibana
   sudo useradd kibana -g kibana
@@ -109,7 +117,6 @@ server.name: "${KIBANA_SERVER_NAME}"
 elasticsearch.hosts: ["http://172.20.21.30:9200", "http://172.20.21.31:9200"]
 
 pid.file: ${KIBANA_HOME}/kibana.pid
-kibana.index: ".kibana"
 _EOF_
  
   sudo su - kibana -c "export KIBANA_HOME=${KIBANA_HOME}; ${KIBANA_HOME}/bin/kibana &>${KIBANA_HOME}/log/$(date +'%Y-%m-%d-%H-%M-%S').log  &"

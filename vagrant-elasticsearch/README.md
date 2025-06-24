@@ -1,24 +1,29 @@
-## Simple Elasticsearch Cluster
+## Minimal Elasticsearch Cluster
 
-This is a simple production elasticsearch 3-node cluster for demo purpose.
+> Update: Since I am now on Mac M2 chip, so the VM image is switched to rocky
+linux arm64, as the result the ES stack binary is updated to arm64 version.
+
+This is a simple elasticsearch 3-node cluster for demo purpose.
 
 It contains components such as Elasticsearch, Filebeat, Logstash and Kibana, all
-installed by downloading binary:
+installed by downloading binary and run (no systemd use):
+
 - master node: ES master, Kibana
 - data1 node:  ES data
 - client node: Filebeat, Logstash
 
 On client node, Filebeat collects sample data from a Apache log file and passes
-it to Logstash which runs in the same node. Then Logstash performs some filtering
-jobs, handles result to ES cluster.
+it to Logstash which runs in the same node. Then Logstash performs some filterings
+and then pass result onto ES cluster and store data there.
 
 Bring up 3 nodes, ES data node suffix index starts from `1`:
 ```bash
 vagrant up
 
-# or separately
+# or separately in order
 vagrant up data1
 vagrant up master
+# vagrant up data1 master
 vagrant up client
 
 # check status
@@ -35,13 +40,18 @@ Destroy VMs:
 vagrant destroy -f
 ```
 
-To access Kibana dashboard, go to chrome browser:
+You ssh to VM and chech ps to see if the binary is running, for example:
+```bash
+ps aux | grep elasticsearch
+ps aux | grep -E "filebeat|logstash"
+```
+
+To access Kibana, go to incognito chrome browser:
 ```
 http://172.20.21.30:5601
 ```
-To query and analyze the sample data in Kibana, first set up Index Patterns.
 
-Several requests in Kibana dev console:
+Try API calls in Kibana dev console:
 ```bash
 # check node status
 GET /_cat/nodes?v&pretty&format=json
@@ -53,3 +63,6 @@ GET /_cat/indices?v
 GET /apache-stale-log-<DATE>/_search?pretty&q=response=200
 GET /apache-stale-log-<DATE>/_search?pretty&q=geoip.city_name=Buffalo
 ```
+
+To query and analyze the sample data in Kibana, you need to create the Index
+pattern first and use it in discovery.
