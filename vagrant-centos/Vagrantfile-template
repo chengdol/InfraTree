@@ -1,13 +1,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-IMAGE_NAME = "generic/centos7"
-IMAGE_VERSION = "3.0.10"
+# Have to use this image to run centOS on Mac M2 arm64 chip.
+# https://portal.cloud.hashicorp.com/vagrant/discover/bento/centos-stream-10
+IMAGE_NAME = "bento/centos-stream-10"
+IMAGE_VERSION = "202502.21.0"
 
-## Vagrantfile for centOS 
 Vagrant.configure("2") do |config|
+  config.vm.hostname = "centos-stream10-#SUFFIX#"
   config.vm.box = IMAGE_NAME
-  config.vm.hostname = "centos-#SUFFIX#"
   config.vm.box_version = IMAGE_VERSION
 
   ## virtualbox configuration
@@ -18,13 +19,26 @@ Vagrant.configure("2") do |config|
 
   ## specify provisioner
   config.vm.provision :shell, path: "./provisioners/provision-#SUFFIX#.sh", privileged: false
-  ## specify workspace
-  config.vm.synced_folder "./workspace", "/workspace", disabled: false
-
-  ## append other provisioner below
-  ## please use firefox or chrome incognito, chrome may not work
+  
   config.vm.network "private_network", ip: "192.168.2.2"
   #config.vm.network "forwarded_port", guest: 9090, host: 9090
 
-  #config.vm.synced_folder "src/", "/srv/website", type: "rsync", rsync__exclude: ".git/"
+  # I disabled the synced folder as the centos stream image does not have
+  # VirtualBox Guest Additions installed, this shared folder feature is not
+  # necessary to run VM.
+
+  # If you enable it, you will see error below when you run "vagrant up":
+
+  # Vagrant was unable to mount VirtualBox shared folders. This is usually
+  # because the filesystem "vboxsf" is not available. This filesystem is
+  # made available via the VirtualBox Guest Additions and kernel module.
+  # Please verify that these guest additions are properly installed in the
+  # guest. This is not a bug in Vagrant and is usually caused by a faulty
+  # Vagrant box. For context, the command attempted was:
+
+  # mount -t vboxsf -o uid=1000,gid=1000,_netdev vagrant /vagrant
+  # The error output from the command was:
+  # mount: /vagrant: unknown filesystem type 'vboxsf'.
+  #       dmesg(1) may have more information after failed mount system call.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 end
