@@ -1,0 +1,43 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Box link: https://portal.cloud.hashicorp.com/vagrant/discover/bento/rockylinux-9
+IMAGE_NAME = "bento/rockylinux-9"
+IMAGE_VERSION = "202502.21.0"
+
+Vagrant.configure("2") do |config|
+  config.vm.hostname = "mysql-standalone"
+  config.vm.box = IMAGE_NAME
+  config.vm.box_version = IMAGE_VERSION
+
+  ## virtualbox configuration
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+
+  ## specify provisioner
+  config.vm.provision :shell, path: "./provision/provision-mysql-8.0.42.sh", privileged: false
+  
+  # config.vm.network "private_network", ip: "192.168.2.2"
+  #config.vm.network "forwarded_port", guest: 9090, host: 9090
+
+  # I disabled the synced folder as the rocky linux image does not have
+  # VirtualBox Guest Additions installed, this shared folder feature is not
+  # necessary to run VM.
+
+  # If you enable it, you will see error below when you run "vagrant up":
+
+  # Vagrant was unable to mount VirtualBox shared folders. This is usually
+  # because the filesystem "vboxsf" is not available. This filesystem is
+  # made available via the VirtualBox Guest Additions and kernel module.
+  # Please verify that these guest additions are properly installed in the
+  # guest. This is not a bug in Vagrant and is usually caused by a faulty
+  # Vagrant box. For context, the command attempted was:
+
+  # mount -t vboxsf -o uid=1000,gid=1000,_netdev vagrant /vagrant
+  # The error output from the command was:
+  # mount: /vagrant: unknown filesystem type 'vboxsf'.
+  #       dmesg(1) may have more information after failed mount system call.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+end
