@@ -5,20 +5,13 @@
 MYSQL_VERSION='8.0.42'
 DOWNLOAD_PATH="https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-${MYSQL_VERSION}-1.el9.aarch64.rpm-bundle.tar"
 
-LogMsg()
-{
-  # parse input and reformat
-  logMsg="$@"
-  echo "["`date +"%Y/%m/%d %r"`"] " ${logMsg}
-}
-
-LogMsg "Download Mysql community server version ${MYSQL_VERSION}..."
+echo "Download Mysql community server version ${MYSQL_VERSION}..."
 wget -q ${DOWNLOAD_PATH}
 
-LogMsg 'uncompress download tar file...'
+echo 'uncompress download tar file...'
 tar -xvf mysql-${MYSQL_VERSION}-1.el9.aarch64.rpm-bundle.tar
 
-LogMsg 'Install essential rpms...'
+echo 'Install essential rpms...'
 sudo dnf install -q -y \
   mysql-community-common-${MYSQL_VERSION}-1.el9.aarch64.rpm \
   mysql-community-libs-${MYSQL_VERSION}-1.el9.aarch64.rpm \
@@ -27,9 +20,9 @@ sudo dnf install -q -y \
   mysql-community-server-${MYSQL_VERSION}-1.el9.aarch64.rpm \
   mysql-community-icu-data-files-${MYSQL_VERSION}-1.el9.aarch64.rpm
 
-LogMsg 'Enable mysqld...'
+echo 'Enable mysqld...'
 sudo systemctl enable mysqld
-LogMsg 'Start mysqld...'
+echo 'Start mysqld...'
 sudo systemctl start mysqld
 
-LogMsg "Mysql server community version ${MYSQL_VERSION} is up and running!"
+echo "Mysql server community version ${MYSQL_VERSION} is up and running!"

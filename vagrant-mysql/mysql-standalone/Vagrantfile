@@ -15,10 +15,6 @@ Vagrant.configure("2") do |config|
     v.memory = 2048
     v.cpus = 2
   end
-
-  ## specify provisioner
-  config.vm.provision :shell, path: "./provision/provision-mysql-8.0.42.sh", privileged: false
-  
   # config.vm.network "private_network", ip: "192.168.2.2"
   #config.vm.network "forwarded_port", guest: 9090, host: 9090
 
@@ -40,4 +36,9 @@ Vagrant.configure("2") do |config|
   # mount: /vagrant: unknown filesystem type 'vboxsf'.
   #       dmesg(1) may have more information after failed mount system call.
   config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  config.vm.provision :shell, path: "../utils/provision-mysql.sh", privileged: false
+  config.vm.provision :shell, path: "../utils/config-password.sh", privileged: false
+  config.vm.provision :shell, path: "../utils/config-binlog.sh", args: "ON", privileged: false
+  config.vm.provision :shell, path: "../utils/enable-gtid.sh", privileged: false
 end
