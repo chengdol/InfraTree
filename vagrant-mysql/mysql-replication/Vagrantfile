@@ -37,6 +37,7 @@ Vagrant.configure("2") do |config|
       end
 
       data_config.vm.hostname = "mysql-replica#{i}"
+      # IP starts from 172.20.21.31, etc.
       data_config.vm.network "private_network", ip: "172.20.21.3#{i}"
       data_config.vm.provision :shell, path: "../utils/provision-mysql.sh", privileged: false
       data_config.vm.provision :shell, path: "../utils/config-password.sh", privileged: false
