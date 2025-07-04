@@ -2,6 +2,7 @@
 # This is the provisioning script to install MySQL community service version
 # 8.0.42 on rocky Linux arm64.
 
+# download site: https://dev.mysql.com/downloads/mysql/8.4.html
 MYSQL_VERSION='8.0.42'
 DOWNLOAD_PATH="https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-${MYSQL_VERSION}-1.el9.aarch64.rpm-bundle.tar"
 

@@ -23,8 +23,11 @@ Vagrant.configure("2") do |config|
 
     master_config.vm.hostname = "mysql-primary"
     master_config.vm.network "private_network", ip: "172.20.21.30"
+    master_config.vm.provision :shell, path: "../utils/config-firewall.sh", privileged: false
     master_config.vm.provision :shell, path: "../utils/provision-mysql.sh", privileged: false
     master_config.vm.provision :shell, path: "../utils/config-password.sh", privileged: false
+    # Make MySQL listen on IPV4 3306 (originally only IPV6)
+    master_config.vm.provision "shell", inline: "echo 'bind-address = 0.0.0.0' | sudo tee -a /etc/my.cnf"
     master_config.vm.provision :shell, path: "../utils/config-binlog.sh", args: "ON", privileged: false
   end
 
@@ -41,10 +44,14 @@ Vagrant.configure("2") do |config|
       data_config.vm.network "private_network", ip: "172.20.21.3#{i}"
       data_config.vm.provision :shell, path: "../utils/provision-mysql.sh", privileged: false
       data_config.vm.provision :shell, path: "../utils/config-password.sh", privileged: false
+      # The mysqlsh load requires local_infile ON.
+      data_config.vm.provision "shell", inline: "echo 'local_infile=1' | sudo tee -a /etc/my.cnf"
       data_config.vm.provision "shell", inline: "echo 'server-id=100#{i}' | sudo tee -a /etc/my.cnf"
       # We don't need binlog enabled in replica, unless you want to do cascading
       # or backup, restore.
       data_config.vm.provision :shell, path: "../utils/config-binlog.sh", args: "OFF", privileged: false
+      # Install Mysql shell
+      data_config.vm.provision :shell, path: "../utils/install-mysqlsh.sh", privileged: false
     end
   end
 end
