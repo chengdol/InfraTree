@@ -1,0 +1,23 @@
+## Context
+This is Vagrant for MySQL PITR setup, it is similiar to the `mysql-standalone`
+Vagrant, but the configurations are set for PITR.
+
+After they are up and running, you can perform PITR based on official
+[reference](https://dev.mysql.com/doc/refman/8.0/en/point-in-time-recovery.html).
+
+> Please note: The setting here is only binary log based, GTID is not enabled.
+
+## Vagrant Commands
+Some basica Vagrant commands to bring up the server and SSH to it:
+```bash
+vagrant status
+
+vagrant up [pitr]
+
+vagrant ssh [pitr]
+
+vagrant destroy -f
+```
+
+## Login
+The root@localhost password is reset as `easyone`, please use it to login mysql.

@@ -8,6 +8,3 @@ sudo firewall-cmd --reload
 
 echo "Check tcp/3306 is allowed..."
 sudo firewall-cmd --list-ports
-
-echo "Check MySQL 3306 port..."
-sudo netstat -tunlp | grep 3306

@@ -52,6 +52,8 @@ Vagrant.configure("2") do |config|
       data_config.vm.provision :shell, path: "../utils/config-binlog.sh", args: "OFF", privileged: false
       # Install Mysql shell
       data_config.vm.provision :shell, path: "../utils/install-mysqlsh.sh", privileged: false
+      # Install zstd
+      data_config.vm.provision :shell, path: "../utils/install-zstd.sh", privileged: false
     end
   end
 end

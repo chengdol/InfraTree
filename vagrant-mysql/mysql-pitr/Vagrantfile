@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Box link: https://portal.cloud.hashicorp.com/vagrant/discover/bento/rockylinux-9
+IMAGE_NAME = "bento/rockylinux-9"
+IMAGE_VERSION = "202502.21.0"
+
+Vagrant.configure("2") do |config|
+  config.vm.box = IMAGE_NAME
+  config.vm.box_version = IMAGE_VERSION
+
+  # I disabled the synced folder as the rocky linux image does not have
+  # VirtualBox Guest Additions installed, this shared folder feature is not
+  # necessary to run VM.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Primary
+  config.vm.define "pitr", primary: true do |master_config|
+    master_config.vm.provider "virtualbox" do |vb|
+      vb.memory = 1024
+      vb.cpus = 2
+    end
+
+    master_config.vm.hostname = "mysql-pitr"
+    master_config.vm.network "private_network", ip: "172.20.22.30"
+    master_config.vm.provision :shell, path: "../utils/config-firewall.sh", privileged: false
+    master_config.vm.provision :shell, path: "../utils/provision-mysql.sh", privileged: false
+    master_config.vm.provision :shell, path: "../utils/config-password.sh", privileged: false
+    # The mysqlsh load requires local_infile ON.
+    master_config.vm.provision "shell", inline: "echo 'local_infile=1' | sudo tee -a /etc/my.cnf"
+    # Make MySQL listen on IPV4 3306 (originally only IPV6)
+    master_config.vm.provision "shell", inline: "echo 'bind-address = 0.0.0.0' | sudo tee -a /etc/my.cnf"
+    master_config.vm.provision :shell, path: "../utils/config-binlog.sh", args: "ON", privileged: false
+    # Install Mysql shell
+    master_config.vm.provision :shell, path: "../utils/install-mysqlsh.sh", privileged: false
+    # Install zstd
+    master_config.vm.provision :shell, path: "../utils/install-zstd.sh", privileged: false
+  end
+end
